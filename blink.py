@@ -36,44 +36,13 @@ class Camera(object):
 
 class Blink(object):
 
-    def __init__(self, email=None, password=None, config_fn=None, server='immedia-semi.com'):
-        if config_fn is None: config_fn = os.path.join(os.path.expanduser("~"), '.blinkconfig')
+    def __init__(self, email, password, server='immedia-semi.com'):
         self._authtoken = None
-        self._email = None
-        self._password = None
+        self._email = email
+        self._password = password
         self._server = server
         self._region = 'prod'
-        if email:
-            self._email = email
-        else:
-            if os.path.isfile(config_fn):
-                with open(config_fn) as f:
-                    config = yaml.load(f.read())
-                    if isinstance(config, dict):
-                        if len(config)==1:
-                            self._email, self._password = list(config.items())[0]
-                        if len(config)>1:
-                            raise Exception('Multiple email/passwords found in .blinkconfig.  Please specify which email to use.')
-                    else:
-                        raise Exception('File .blinkconfig must be a YAML dictionary.  Currently it is a YAML %s.' % type(config))
-        if password:
-            self._password = password
-        elif self._email and not self._password:
-            if os.path.isfile(config_fn):
-                with open(config_fn) as f:
-                    config = yaml.load(f.read())
-                    if isinstance(config, dict):
-                        if self._email in config:
-                            self._password = config[self.email]
-                        else:
-                            raise Exception('File .blinkconfig does not contain a password for %s' % repr(self._email))
-                    else:
-                        raise Exception('File .blinkconfig must be a YAML dictionary.  Currently it is a YAML %s.' % type(config))
-        if not self._email:
-            raise Exception('Please specify an email address.')
-        if not self._password:
-            raise Exception('Please specify a password.')
-    
+
     def _connect_if_needed(self):
         if not self._authtoken: self.connect()
         if not self.connected: raise Exception('Unable to connect.')
@@ -91,13 +60,13 @@ class Blink(object):
     
     def connect(self):
         headers = {
-          'Content-Type': 'application/json',
-          'Host': "prod." + self._server,
+            'Content-Type': 'application/json',
+            'Host': "prod." + self._server,
         }
         data = {
-          'email': self._email,
-          'password': self._password,
-          'client_specifier': 'Blink Home Security Camera Python API @ https://github.com/keredson/blink',
+            'email': self._email,
+            'password': self._password,
+            'client_specifier': 'iPhone 9.2 | 2.2 | 222',
         }
         resp = requests.post(self._path('login'), json=data, headers=headers)
         if resp.status_code!=200:
