@@ -10,4 +10,12 @@ if __name__=='__main__':
 
   b = blink.Blink(email=args.email, password=args.password)
   b.connect()
-  print b.health
+  #print b.health
+
+  events = b.eventsv2()
+  for event in events:
+    content = b.download_video_v2(event)
+    
+    f = open(b.get_event_name_v2(event), 'wb')
+    f.write(content)
+    f.close()

@@ -40,12 +40,13 @@ class Camera(object):
 
 class Blink(object):
 
-  def __init__(self, email=None, password=None, config_fn=None, server='prod.immedia-semi.com'):
+  def __init__(self, email=None, password=None, config_fn=None, server='immedia-semi.com'):
     if config_fn is None: config_fn = os.path.join(os.path.expanduser("~"), '.blinkconfig')
     self._authtoken = None
     self._email = None
     self._password = None
     self._server = server
+    self._region = 'prod'
     if email:
       self._email = email
     else:
@@ -90,12 +91,12 @@ class Blink(object):
     return {'TOKEN_AUTH': self._authtoken['authtoken']}
     
   def _path(self, path):
-    return 'https://%s/%s' % (self._server, path.lstrip('/'))
+    return 'https://rest.%s.%s/%s' % (self._region, self._server, path.lstrip('/'))
   
   def connect(self):
     headers = {
       'Content-Type': 'application/json',
-      'Host': self._server,
+      'Host': "prod." + self._server,
     }
     data = {
       'email': self._email,
@@ -113,7 +114,8 @@ class Blink(object):
       network['id'] = network_id
       network = Network(**network)
       self.networks.append(network)
-    self._region = raw['region']
+    
+    (self._region, value) = raw['region'].items()[0]
     self._authtoken = raw['authtoken']
   
   def homescreen(self):
@@ -132,6 +134,13 @@ class Blink(object):
     events = [Event(**event) for event in events]
     return events
 
+  def eventsv2(self):
+    self._connect_if_needed()
+    resp = requests.get(self._path('api/v2/videos/page/0'), headers=self._auth_headers)
+    events = resp.json()
+    events = [Event(**event) for event in events]
+    return events
+
   def cameras(self, network, type='motion'):
     self._connect_if_needed()
     resp = requests.get(self._path('network/%s/cameras' % network.id), headers=self._auth_headers)
@@ -146,6 +155,18 @@ class Blink(object):
     self._connect_if_needed()
     resp = requests.get(self._path(event.video_url), headers=self._auth_headers)
     return resp.content
+
+  def download_video_v2(self, event):
+    '''
+      returns the mp4 data as a file-like object
+    '''
+    self._connect_if_needed()
+    resp = requests.get(self._path(event.address), headers=self._auth_headers)
+    return resp.content
+
+  def get_event_name_v2(self, event):
+    files = event.address.split('/')
+    return event.camera_name + "_" + files[len(files)-1]
 
   def download_thumbnail(self, event):
     '''
