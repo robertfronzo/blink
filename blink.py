@@ -249,13 +249,3 @@ class Blink(object):
         mp4 = self.download_video(event)
         with open(event_fn,'w') as f:
           f.write(mp4)
-          
-
-def _main():        
-  args = sys.argv[1:]
-  if args[0]=='--archive':
-    Blink().archive(args[1])
-  
-if __name__=='__main__':
-  _main()
-    
