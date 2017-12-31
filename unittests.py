@@ -29,6 +29,12 @@ class TestBlink(unittest.TestCase):
         events = self.b.eventsv2()
         self.assertEqual(type(events), list)
 
+    def test_getUnwatchedVideos(self):
+        videos = self.b.getUnwatchedVideos()
+        self.assertEqual(type(videos), list)
+        print("getUnwatchedVideos: ")
+        print(videos)
+
     def test_events_v2_download(self):
         event = self.b.eventsv2()[0]
         content = self.b.download_video_v2(event)

@@ -19,6 +19,13 @@ class Event(object):
     def __repr__(self):
         return '<Event id=%s camera=%s at=%s>' % (self.id, repr(self.camera_name), repr(self.created_at))
 
+class Video(object):
+    def __init__(self, **kwargs):
+        for k,v in kwargs.items():
+            setattr(self, k, v)
+    def __repr__(self):
+        return '<Video id=%s camera=%s at=%s>' % (self.id, repr(self.camera_name), repr(self.created_at))
+
 class SyncModule(object):
     def __init__(self, **kwargs):
         for k,v in kwargs.items():
@@ -106,6 +113,13 @@ class Blink(object):
         events = [Event(**event) for event in events]
         return events
 
+    def getUnwatchedVideos(self):
+        self._connect_if_needed()
+        resp = requests.get(self._path('api/v2/videos/unwatched/page/0'), headers=self._auth_headers)
+        videos = resp.json()
+        videos = [Video(**video) for video in videos]
+        return videos
+
     def cameras(self, network, type='motion'):
         self._connect_if_needed()
         resp = requests.get(self._path('network/%s/cameras' % network.id), headers=self._auth_headers)
@@ -159,7 +173,7 @@ class Blink(object):
           Notes: When this call returns, it does not mean the disarm request is complete, the client must gather the request ID from the response and poll for the status of the command.
         '''
         self._connect_if_needed()
-        resp = requests.get(self._path('network/%s/arm' % network.id), headers=self._auth_headers)
+        resp = requests.post(self._path('network/%s/arm' % network.id), headers=self._auth_headers)
         return resp.json()
 
     def disarm(self, network):
@@ -169,7 +183,7 @@ class Blink(object):
           Notes: When this call returns, it does not mean the disarm request is complete, the client must gather the request ID from the response and poll for the status of the command.
         '''
         self._connect_if_needed()
-        resp = requests.get(self._path('network/%s/disarm' % network.id), headers=self._auth_headers)
+        resp = requests.post(self._path('network/%s/disarm' % network.id), headers=self._auth_headers)
         return resp.json()
 
     def command_status(self, network, command_id):
@@ -200,6 +214,7 @@ class Blink(object):
         resp = requests.get(self._path('regions'), headers=self._auth_headers)
         return resp.json()
 
+#### Not working
     def health(self):
         '''
           Gets information about system health
@@ -210,28 +225,28 @@ class Blink(object):
 
 
 
-    # UTIL FUNCTIONS
+    # # UTIL FUNCTIONS
       
-    def archive(self, path):
-        self._connect_if_needed()
-        for network in self.networks:
-            network_dir = os.path.join(path, network['name'])
-            if not os.path.isdir(network_dir):
-                os.mkdir(network_dir)
+    # def archive(self, path):
+    #     self._connect_if_needed()
+    #     for network in self.networks:
+    #         network_dir = os.path.join(path, network['name'])
+    #         if not os.path.isdir(network_dir):
+    #             os.mkdir(network_dir)
 
-            already_downloaded = set()
-            for fn in os.listdir(network_dir):
-                if not fn.endswith('.mp4'): continue
-                fn = fn[:-4]
-                event_id = int(fn.split(' - ')[0])
-                already_downloaded.add(event_id)
+    #         already_downloaded = set()
+    #         for fn in os.listdir(network_dir):
+    #             if not fn.endswith('.mp4'): continue
+    #             fn = fn[:-4]
+    #             event_id = int(fn.split(' - ')[0])
+    #             already_downloaded.add(event_id)
 
-            events = self.events(network['id'])
-            for event in events:
-                if event['id'] in already_downloaded: continue
-                when = dateutil.parser.parse(event['created_at'])
-                event_fn = os.path.join(network_dir, '%s - %s @ %s.mp4' % (event['id'], event['camera_name'], when.strftime('%Y-%m-%d %I:%M:%S %p %Z')))
-                print('Saving:', event_fn)
-                mp4 = self.download_video(event)
-                with open(event_fn,'w') as f:
-                    f.write(mp4)
+    #         events = self.events(network['id'])
+    #         for event in events:
+    #             if event['id'] in already_downloaded: continue
+    #             when = dateutil.parser.parse(event['created_at'])
+    #             event_fn = os.path.join(network_dir, '%s - %s @ %s.mp4' % (event['id'], event['camera_name'], when.strftime('%Y-%m-%d %I:%M:%S %p %Z')))
+    #             print('Saving:', event_fn)
+    #             mp4 = self.download_video(event)
+    #             with open(event_fn,'w') as f:
+    #                 f.write(mp4)
