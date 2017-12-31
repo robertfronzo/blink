@@ -29,6 +29,10 @@ class TestBlink(unittest.TestCase):
         events = self.b.eventsv2()
         self.assertEqual(type(events), list)
 
+    def test_video_count(self):
+        count = self.b.getVideoCount()
+        print("video count = " + str(count))
+
     def test_getUnwatchedVideos(self):
         videos = self.b.getUnwatchedVideos()
         self.assertEqual(type(videos), list)

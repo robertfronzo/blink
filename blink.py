@@ -113,12 +113,18 @@ class Blink(object):
         events = [Event(**event) for event in events]
         return events
 
+    def getVideoCount(self):
+        self._connect_if_needed()
+        resp = requests.get(self._path('api/v2/videos/count'), headers=self._auth_headers)
+        return resp.json()['count']
+
     def getUnwatchedVideos(self):
         self._connect_if_needed()
         resp = requests.get(self._path('api/v2/videos/unwatched/page/0'), headers=self._auth_headers)
         videos = resp.json()
         videos = [Video(**video) for video in videos]
         return videos
+
 
     def cameras(self, network, type='motion'):
         self._connect_if_needed()
