@@ -148,6 +148,7 @@ class Blink(object):
         '''
         self._connect_if_needed()
         filename = device['thumbnail']+".jpg"
+        printf(self._path(filename))
         resp = requests.get(self._path(filename), headers=self._auth_headers)
         return resp.content, filename
         
