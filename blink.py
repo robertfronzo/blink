@@ -149,9 +149,20 @@ class Blink(object):
         resp = requests.get(self._path(event.address), headers=self._auth_headers)
         return resp.content
 
+    def downloadThumbnail(self, event):
+        '''
+          returns the jpg data as a file-like object
+        '''
+        self._connect_if_needed()
+        resp = requests.get(self._path(event.thumbnail+".jpg"), headers=self._auth_headers)
+        return resp.content
+
+
     def get_event_name_v2(self, event):
         files = event.address.split('/')
-        return event.camera_name + "_" + files[len(files)-1]
+        return event.camera_name + "_" + files[len(files)-1]    
+    def getThumbnailName(self, event):
+        return self.get_event_name_v2(event) + ".jpg"
 
     def download_thumbnail(self, event):
         '''

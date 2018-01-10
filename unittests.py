@@ -48,6 +48,15 @@ class TestBlink(unittest.TestCase):
         f.close()
         print('Save downloaded event to ' + filename)
 
+    def test_downloadThumbnail(self):
+        event = self.b.eventsv2()[0]
+        content = self.b.downloadThumbnail(event)
+        filename = self.b.getThumbnailName(event)
+        f = open(filename, 'wb')
+        f.write(content)
+        f.close()
+        print('Save downloaded image to ' + filename)
+
     def test_cameras(self):
         cameras = self.b.cameras(self.b.networks[0])
         self.assertEqual(type(cameras), list)
