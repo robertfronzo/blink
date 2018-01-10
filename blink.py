@@ -50,10 +50,9 @@ class Blink(object):
         self._server = server
         self._region = 'prod'
 
-    def _connect_if_needed(self):
-        if not self._authtoken: self.connect()
-        if not self.connected: raise Exception('Unable to connect.')
-    
+###############################################################################
+##  Property    
+###############################################################################
     @property
     def connected(self):
         return self._authtoken is not None
@@ -61,11 +60,28 @@ class Blink(object):
     @property
     def _auth_headers(self):
         return {'TOKEN_AUTH': self._authtoken['authtoken']}
-      
+
+###############################################################################
+##  Common    
+###############################################################################
+    def _connect_if_needed(self):
+        if not self._authtoken: self.login()
+        if not self.connected: raise Exception('Unable to connect.')
+
     def _path(self, path):
         return 'https://rest.%s.%s/%s' % (self._region, self._server, path.lstrip('/'))
+
+    def get_event_name_v2(self, event):
+        files = event.address.split('/')
+        return event.camera_name + "_" + files[len(files)-1]    
+
+    def get_thumbnail_name(self, event):
+        return self.get_event_name_v2(event) + ".jpg"
     
-    def connect(self):
+###############################################################################
+##  Client APIs     
+###############################################################################
+    def login(self):
         headers = {
             'Content-Type': 'application/json',
             'Host': "prod." + self._server,
@@ -97,33 +113,19 @@ class Blink(object):
         self._connect_if_needed()
         resp = requests.get(self._path('homescreen'), headers=self._auth_headers)
         return resp.json()
-      
-    def events(self, network, type='motion'):
-        self._connect_if_needed()
-        resp = requests.get(self._path('events/network/%s' % network.id), headers=self._auth_headers)
-        events = resp.json()['event']
-        if type: events = [e for e in events if e['type']=='motion']
-        events = [Event(**event) for event in events]
-        return events
 
-    def eventsv2(self):
+    def eventsv2(self, pagenumber = 0):
         self._connect_if_needed()
-        resp = requests.get(self._path('api/v2/videos/page/0'), headers=self._auth_headers)
+        resp = requests.get(self._path('api/v2/videos/page/'+str(pagenumber)), headers=self._auth_headers)
         events = resp.json()
         events = [Event(**event) for event in events]
         return events
 
-    def getVideoCount(self):
+    def get_video_count(self):
         self._connect_if_needed()
         resp = requests.get(self._path('api/v2/videos/count'), headers=self._auth_headers)
         return resp.json()['count']
 
-    def getUnwatchedVideos(self):
-        self._connect_if_needed()
-        resp = requests.get(self._path('api/v2/videos/unwatched/page/0'), headers=self._auth_headers)
-        videos = resp.json()
-        videos = [Video(**video) for video in videos]
-        return videos
 
 
     def cameras(self, network, type='motion'):
@@ -133,13 +135,6 @@ class Blink(object):
         cameras = [Camera(**camera) for camera in cameras]
         return cameras
     
-    def download_video(self, event):
-        '''
-          returns the mp4 data as a file-like object
-        '''
-        self._connect_if_needed()
-        resp = requests.get(self._path(event.video_url), headers=self._auth_headers)
-        return resp.content
 
     def download_video_v2(self, event):
         '''
@@ -149,7 +144,7 @@ class Blink(object):
         resp = requests.get(self._path(event.address), headers=self._auth_headers)
         return resp.content
 
-    def downloadThumbnail(self, event):
+    def download_thumbnail_v2(self, event):
         '''
           returns the jpg data as a file-like object
         '''
@@ -158,22 +153,12 @@ class Blink(object):
         return resp.content
 
 
-    def get_event_name_v2(self, event):
-        files = event.address.split('/')
-        return event.camera_name + "_" + files[len(files)-1]    
-    def getThumbnailName(self, event):
-        return self.get_event_name_v2(event) + ".jpg"
 
-    def download_thumbnail(self, event):
-        '''
-          returns the jpg data as a file-like object
-          doesn't work - server returns 404
-        '''
-        self._connect_if_needed()
-        thumbnail_url = self._path(event.video_url[:-4] + '.jpg')
-        resp = requests.get(thumbnail_url, headers=self._auth_headers)
-        return resp.content
 
+
+###############################################################################
+##  System APIs     
+###############################################################################
     def sync_modules(self, network):
         '''
           Response: JSON response containing information about the known state of the Sync module, most notably if it is online
@@ -214,6 +199,14 @@ class Blink(object):
         resp = requests.get(self._path('network/%s/command/%s' % (network.id, command_id)), headers=self._auth_headers)
         return resp.json()
 
+    def get_unwatched_videos(self):
+        self._connect_if_needed()
+        resp = requests.get(self._path('api/v2/videos/unwatched/page/0'), headers=self._auth_headers)
+        videos = resp.json()
+        videos = [Video(**video) for video in videos]
+        return videos
+
+
     def clients(self):
         '''
           Request Gets information about devices that have connected to the blink service
@@ -231,7 +224,36 @@ class Blink(object):
         resp = requests.get(self._path('regions'), headers=self._auth_headers)
         return resp.json()
 
-#### Not working
+
+###############################################################################
+##  Obsolete functions are neither not working or not tested!
+###############################################################################
+    def events(self, network, type='motion'):
+        self._connect_if_needed()
+        resp = requests.get(self._path('events/network/%s' % network.id), headers=self._auth_headers)
+        events = resp.json()['event']
+        if type: events = [e for e in events if e['type']=='motion']
+        events = [Event(**event) for event in events]
+        return events
+
+    def download_video(self, event):
+        '''
+          returns the mp4 data as a file-like object
+        '''
+        self._connect_if_needed()
+        resp = requests.get(self._path(event.video_url), headers=self._auth_headers)
+        return resp.content
+
+    def download_thumbnail(self, event):
+        '''
+          returns the jpg data as a file-like object
+          doesn't work - server returns 404
+        '''
+        self._connect_if_needed()
+        thumbnail_url = self._path(event.video_url[:-4] + '.jpg')
+        resp = requests.get(thumbnail_url, headers=self._auth_headers)
+        return resp.content
+
     def health(self):
         '''
           Gets information about system health
@@ -240,30 +262,27 @@ class Blink(object):
         resp = requests.get(self._path('health'), headers=self._auth_headers)
         return resp.json()
 
+    def archive(self, path):
+        self._connect_if_needed()
+        for network in self.networks:
+            network_dir = os.path.join(path, network['name'])
+            if not os.path.isdir(network_dir):
+                os.mkdir(network_dir)
 
+            already_downloaded = set()
+            for fn in os.listdir(network_dir):
+                if not fn.endswith('.mp4'): continue
+                fn = fn[:-4]
+                event_id = int(fn.split(' - ')[0])
+                already_downloaded.add(event_id)
 
-    # # UTIL FUNCTIONS
-      
-    # def archive(self, path):
-    #     self._connect_if_needed()
-    #     for network in self.networks:
-    #         network_dir = os.path.join(path, network['name'])
-    #         if not os.path.isdir(network_dir):
-    #             os.mkdir(network_dir)
+            events = self.events(network['id'])
+            for event in events:
+                if event['id'] in already_downloaded: continue
+                when = dateutil.parser.parse(event['created_at'])
+                event_fn = os.path.join(network_dir, '%s - %s @ %s.mp4' % (event['id'], event['camera_name'], when.strftime('%Y-%m-%d %I:%M:%S %p %Z')))
+                print('Saving:', event_fn)
+                mp4 = self.download_video(event)
+                with open(event_fn,'w') as f:
+                    f.write(mp4)
 
-    #         already_downloaded = set()
-    #         for fn in os.listdir(network_dir):
-    #             if not fn.endswith('.mp4'): continue
-    #             fn = fn[:-4]
-    #             event_id = int(fn.split(' - ')[0])
-    #             already_downloaded.add(event_id)
-
-    #         events = self.events(network['id'])
-    #         for event in events:
-    #             if event['id'] in already_downloaded: continue
-    #             when = dateutil.parser.parse(event['created_at'])
-    #             event_fn = os.path.join(network_dir, '%s - %s @ %s.mp4' % (event['id'], event['camera_name'], when.strftime('%Y-%m-%d %I:%M:%S %p %Z')))
-    #             print('Saving:', event_fn)
-    #             mp4 = self.download_video(event)
-    #             with open(event_fn,'w') as f:
-    #                 f.write(mp4)

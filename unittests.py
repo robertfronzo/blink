@@ -7,13 +7,12 @@ class TestBlink(unittest.TestCase):
 
     def setUp(self):
         self.b = Blink(self.email, self.password)
-        self.b.connect()
-        
-    def test_info(self):
-        print('email', self.email)
-        print('password', self.password)
+        self.b.login()
 
-    def test_connect(self):
+###############################################################################
+##  Client APIs     
+###############################################################################
+    def test_login(self):
         self.assertTrue(self.b.connected)
 
     def test_homescreen(self):
@@ -30,14 +29,8 @@ class TestBlink(unittest.TestCase):
         self.assertEqual(type(events), list)
 
     def test_video_count(self):
-        count = self.b.getVideoCount()
+        count = self.b.get_video_count()
         print("video count = " + str(count))
-
-    def test_getUnwatchedVideos(self):
-        videos = self.b.getUnwatchedVideos()
-        self.assertEqual(type(videos), list)
-        print("getUnwatchedVideos: ")
-        print(videos)
 
     def test_events_v2_download(self):
         event = self.b.eventsv2()[0]
@@ -48,10 +41,10 @@ class TestBlink(unittest.TestCase):
         f.close()
         print('Save downloaded event to ' + filename)
 
-    def test_downloadThumbnail(self):
+    def test_thumbnail_v2_download(self):
         event = self.b.eventsv2()[0]
-        content = self.b.downloadThumbnail(event)
-        filename = self.b.getThumbnailName(event)
+        content = self.b.download_thumbnail_v2(event)
+        filename = self.b.get_thumbnail_name(event)
         f = open(filename, 'wb')
         f.write(content)
         f.close()
@@ -60,6 +53,10 @@ class TestBlink(unittest.TestCase):
     def test_cameras(self):
         cameras = self.b.cameras(self.b.networks[0])
         self.assertEqual(type(cameras), list)
+
+###############################################################################
+##  System APIs     
+###############################################################################
 
     def test_clients(self):
         clients = self.b.clients()
