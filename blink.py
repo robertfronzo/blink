@@ -75,8 +75,12 @@ class Blink(object):
         files = event.address.split('/')
         return event.camera_name + "_" + files[len(files)-1]    
 
-    def get_thumbnail_name(self, event, postfix=""):
+    def get_thumbnail_name_event(self, event, postfix=""):
         return self.get_event_name_v2(event) + postfix + ".jpg"
+
+    def get_thumbnail_name_device(self, device, postfix=""):
+        files = device['thumbnail'].split('/')
+        return files[len(files)-1] + postfix + ".jpg"
     
 ###############################################################################
 ##  Client APIs     
@@ -148,9 +152,8 @@ class Blink(object):
         '''
         self._connect_if_needed()
         filename = device['thumbnail']+".jpg"
-        printf(self._path(filename))
         resp = requests.get(self._path(filename), headers=self._auth_headers)
-        return resp.content, filename
+        return resp.content, self.get_thumbnail_name_device(device)
         
 ###############################################################################
 ##  System APIs     
