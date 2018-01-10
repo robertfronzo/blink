@@ -9,6 +9,12 @@ class TestBlink(unittest.TestCase):
         self.b = Blink(self.email, self.password)
         self.b.login()
 
+    def save_to_file(self, content, filename):
+        f = open(filename, 'wb')
+        f.write(content)
+        f.close()
+        print('Save downloaded event to ' + filename)
+
 ###############################################################################
 ##  Client APIs     
 ###############################################################################
@@ -19,10 +25,10 @@ class TestBlink(unittest.TestCase):
         data = self.b.homescreen()
         self.assertTrue(data['account'] is not None)
         self.assertTrue(data['network'] is not None)
-
-    def test_events(self):
-        events = self.b.events(self.b.networks[0])
-        self.assertEqual(type(events), list)
+        for device in data['devices']:
+            if device['device_type'] is not None and device['device_type'] == "camera":
+                content,filename = self.b.download_thumbnail_home_v2(device)
+                self.save_to_file(content, "home_"+filename)
 
     def test_events_v2(self):
         events = self.b.eventsv2()
@@ -36,27 +42,23 @@ class TestBlink(unittest.TestCase):
         event = self.b.eventsv2()[0]
         content = self.b.download_video_v2(event)
         filename = self.b.get_event_name_v2(event)
-        f = open(filename, 'wb')
-        f.write(content)
-        f.close()
-        print('Save downloaded event to ' + filename)
+        self.save_to_file(content, "event_"+filename)
 
-    def test_thumbnail_v2_download(self):
+    def test_thumbnail_event_v2_download(self):
         event = self.b.eventsv2()[0]
-        content = self.b.download_thumbnail_v2(event)
-        filename = self.b.get_thumbnail_name(event)
+        content = self.b.download_thumbnail_event_v2(event)
+        filename = self.b.get_thumbnail_name(event, "event")
         f = open(filename, 'wb')
         f.write(content)
         f.close()
         print('Save downloaded image to ' + filename)
 
-    def test_cameras(self):
-        cameras = self.b.cameras(self.b.networks[0])
-        self.assertEqual(type(cameras), list)
-
 ###############################################################################
 ##  System APIs     
 ###############################################################################
+    def test_cameras(self):
+        cameras = self.b.cameras(self.b.networks[0])
+        self.assertEqual(type(cameras), list)
 
     def test_clients(self):
         clients = self.b.clients()

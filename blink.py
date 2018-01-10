@@ -75,8 +75,8 @@ class Blink(object):
         files = event.address.split('/')
         return event.camera_name + "_" + files[len(files)-1]    
 
-    def get_thumbnail_name(self, event):
-        return self.get_event_name_v2(event) + ".jpg"
+    def get_thumbnail_name(self, event, postfix=""):
+        return self.get_event_name_v2(event) + postfix + ".jpg"
     
 ###############################################################################
 ##  Client APIs     
@@ -126,16 +126,6 @@ class Blink(object):
         resp = requests.get(self._path('api/v2/videos/count'), headers=self._auth_headers)
         return resp.json()['count']
 
-
-
-    def cameras(self, network, type='motion'):
-        self._connect_if_needed()
-        resp = requests.get(self._path('network/%s/cameras' % network.id), headers=self._auth_headers)
-        cameras = resp.json()['devicestatus']
-        cameras = [Camera(**camera) for camera in cameras]
-        return cameras
-    
-
     def download_video_v2(self, event):
         '''
           returns the mp4 data as a file-like object
@@ -144,7 +134,7 @@ class Blink(object):
         resp = requests.get(self._path(event.address), headers=self._auth_headers)
         return resp.content
 
-    def download_thumbnail_v2(self, event):
+    def download_thumbnail_event_v2(self, event):
         '''
           returns the jpg data as a file-like object
         '''
@@ -152,10 +142,15 @@ class Blink(object):
         resp = requests.get(self._path(event.thumbnail+".jpg"), headers=self._auth_headers)
         return resp.content
 
-
-
-
-
+    def download_thumbnail_home_v2(self, device):
+        '''
+          returns the jpg data as a file-like object
+        '''
+        self._connect_if_needed()
+        filename = device['thumbnail']+".jpg"
+        resp = requests.get(self._path(filename), headers=self._auth_headers)
+        return resp.content, filename
+        
 ###############################################################################
 ##  System APIs     
 ###############################################################################
@@ -167,6 +162,13 @@ class Blink(object):
         self._connect_if_needed()
         resp = requests.get(self._path('network/%s/syncmodules' % network.id), headers=self._auth_headers)
         return [SyncModule(**resp.json()['syncmodule'])]
+
+    def cameras(self, network, type='motion'):
+        self._connect_if_needed()
+        resp = requests.get(self._path('network/%s/cameras' % network.id), headers=self._auth_headers)
+        cameras = resp.json()['devicestatus']
+        cameras = [Camera(**camera) for camera in cameras]
+        return cameras
 
     def arm(self, network):
         '''
