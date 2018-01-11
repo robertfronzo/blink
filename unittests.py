@@ -9,12 +9,6 @@ class TestBlink(unittest.TestCase):
         self.b = Blink(self.email, self.password)
         self.b.login()
 
-    def save_to_file(self, content, filename):
-        f = open(filename, 'wb')
-        f.write(content)
-        f.close()
-        print('Save downloaded event to ' + filename)
-
 ###############################################################################
 ##  Client APIs     
 ###############################################################################
@@ -28,7 +22,7 @@ class TestBlink(unittest.TestCase):
         for device in data['devices']:
             if device['device_type'] is not None and device['device_type'] == "camera":
                 content,filename = self.b.download_thumbnail_home_v2(device)
-                self.save_to_file(content, "home_"+filename)
+                blink.save_to_file(content, "home_"+filename)
 
     def test_events_v2(self):
         events = self.b.eventsv2()
@@ -42,7 +36,7 @@ class TestBlink(unittest.TestCase):
         event = self.b.eventsv2()[0]
         content = self.b.download_video_v2(event)
         filename = self.b.get_event_name_v2(event)
-        self.save_to_file(content, "event_"+filename)
+        blink.save_to_file(content, "event_"+filename)
 
     def test_thumbnail_event_v2_download(self):
         event = self.b.eventsv2()[0]

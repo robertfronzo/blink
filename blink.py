@@ -1,9 +1,16 @@
 from __future__ import print_function
 import io, json, os, requests, sys, yaml
+from time import sleep
 import dateutil.parser
 
 
 __version__ = '0.2.0'
+
+def save_to_file(content, filename):
+    f = open(filename, 'wb')
+    f.write(content)
+    f.close()
+
 
 class Network(object):
     def __init__(self, **kwargs):
@@ -154,7 +161,31 @@ class Blink(object):
         filename = device['thumbnail']+".jpg"
         resp = requests.get(self._path(filename), headers=self._auth_headers)
         return resp.content, self.get_thumbnail_name_device(device)
-        
+
+###############################################################################
+##  MiddleWare APIs     
+###############################################################################
+    def refresh_all_cameras(self):
+        '''
+          Refresh all cameras with lastest thumbnails
+        '''
+        self._connect_if_needed()
+
+        resp = requests.get(self._path("networks"), headers=self._auth_headers)
+        resp = resp.json()
+        for network in resp['networks']:
+            camurl = self._path("network/"+str(network['id'])+"/cameras")
+            respcam = requests.get(camurl, headers=self._auth_headers)
+            respcam = respcam.json()
+            for camera in respcam['devicestatus']:
+                capurl = self._path("network/"+str(network['id'])+"/camera/"+str(camera['camera_id'])+"/thumbnail")
+                rescap = requests.post(capurl, headers=self._auth_headers)
+
+        sleep(1)
+        return ;
+
+
+
 ###############################################################################
 ##  System APIs     
 ###############################################################################
