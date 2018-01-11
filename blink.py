@@ -165,6 +165,33 @@ class Blink(object):
 ###############################################################################
 ##  MiddleWare APIs     
 ###############################################################################
+    def list_network_ids(self):
+        self._connect_if_needed()
+        ids = []
+        resp = requests.get(self._path("networks"), headers=self._auth_headers)
+        resp = resp.json()
+        for network in resp['networks']:
+            if not resp['summary'][str(network['id'])]['onboarded']:
+                continue
+            ids.append(network['id'])
+        return ids
+
+    def list_camera_ids(self):
+        ids = []
+        resp = requests.get(self._path("networks"), headers=self._auth_headers)
+        resp = resp.json()
+        for network in resp['networks']:
+            if not resp['summary'][str(network['id'])]['onboarded']:
+                continue
+
+            camurl = self._path("network/"+str(network['id'])+"/cameras")
+            respcam = requests.get(camurl, headers=self._auth_headers)
+            respcam = respcam.json()
+            for camera in respcam['devicestatus']:
+                ids.append(camera['camera_id'])
+
+        return ids
+
     def refresh_all_cameras(self):
         '''
           Refresh all cameras with lastest thumbnails
@@ -174,6 +201,8 @@ class Blink(object):
         resp = requests.get(self._path("networks"), headers=self._auth_headers)
         resp = resp.json()
         for network in resp['networks']:
+            if not resp['summary'][str(network['id'])]['onboarded']:
+                continue
             camurl = self._path("network/"+str(network['id'])+"/cameras")
             respcam = requests.get(camurl, headers=self._auth_headers)
             respcam = respcam.json()
@@ -184,6 +213,21 @@ class Blink(object):
         sleep(1)
         return ;
 
+    def events_from_camera(self, camera_id, max_count = 5):
+        self._connect_if_needed()
+
+        events = []
+        pagenumber = -1
+        while len(events) < max_count:
+            pagenumber = pagenumber + 1
+            resp = requests.get(self._path('api/v2/videos/page/'+str(pagenumber)), headers=self._auth_headers)
+            currentEvents = resp.json()
+            for event in currentEvents:
+                if event['camera_id'] == camera_id:
+                    events.append(Event(**event))
+                    if(len(events) >= max_count):
+                        break;
+        return events
 
 
 ###############################################################################

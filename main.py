@@ -11,6 +11,19 @@ if __name__=='__main__':
     b = blink.Blink(email=args.email, password=args.password)
     b.login()
 
+    ## Show all network IDs
+    networksids = b.list_network_ids()
+    print('Network IDs are:')
+    for id in networksids:
+        print(id)
+
+    # Show all camera IDs
+    cameraids = b.list_camera_ids()
+    print('Camera IDs are:')
+    for id in cameraids:
+        print(id)
+
+    # Update all cameras and download latest thumbnails
     b.refresh_all_cameras()
     data = b.homescreen()
     for device in data['devices']:
@@ -19,8 +32,19 @@ if __name__=='__main__':
             blink.save_to_file(content, filename)
             print("Download latest thumbnails to " + filename)
 
+    # Download latest events from all cameras
     events = b.eventsv2()
     for event in events:
         content = b.download_video_v2(event)
         filename = b.get_event_name_v2(event)
         blink.save_to_file(content, filename)
+
+    # Download latest events from one camera
+    if len(cameraids) > 0:
+        id = cameraids[0]
+        events = b.events_from_camera(id)
+        for event in events:
+            content = b.download_video_v2(event)
+            filename = b.get_event_name_v2(event)
+            blink.save_to_file(content, str(id) + "_" + filename)
+            

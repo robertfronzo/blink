@@ -48,6 +48,17 @@ class TestBlink(unittest.TestCase):
         print('Save downloaded image to ' + filename)
 
 ###############################################################################
+##  MiddleWare APIs     
+###############################################################################
+    def test_list_network_ids(self):
+        ids = self.b.list_network_ids()
+        self.assertEqual(type(ids), list)
+
+    def test_list_camera_ids(self):
+        ids = self.b.list_camera_ids()
+        self.assertEqual(type(ids), list)
+
+###############################################################################
 ##  System APIs     
 ###############################################################################
     def test_cameras(self):
