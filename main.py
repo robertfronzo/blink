@@ -42,7 +42,8 @@ if __name__=='__main__':
     # Download latest events from one camera
     if len(cameraids) > 0:
         id = cameraids[0]
-        events = b.events_from_camera(id)
+        # Download at most 5 event from this camera
+        events = b.events_from_camera(id, 5)
         for event in events:
             content = b.download_video_v2(event)
             filename = b.get_event_name_v2(event)

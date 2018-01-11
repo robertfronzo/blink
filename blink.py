@@ -163,7 +163,7 @@ class Blink(object):
         return resp.content, self.get_thumbnail_name_device(device)
 
 ###############################################################################
-##  MiddleWare APIs     
+##  Middleware Functions     
 ###############################################################################
     def list_network_ids(self):
         self._connect_if_needed()
@@ -210,6 +210,7 @@ class Blink(object):
                 capurl = self._path("network/"+str(network['id'])+"/camera/"+str(camera['camera_id'])+"/thumbnail")
                 rescap = requests.post(capurl, headers=self._auth_headers)
 
+        #Camera needs some time to refresh
         sleep(1)
         return ;
 

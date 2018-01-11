@@ -33,13 +33,19 @@ class TestBlink(unittest.TestCase):
         print("video count = " + str(count))
 
     def test_events_v2_download(self):
-        event = self.b.eventsv2()[0]
+        events = self.b.eventsv2()
+        if len(events) == 0:
+            return ;
+        event = events[0]
         content = self.b.download_video_v2(event)
         filename = self.b.get_event_name_v2(event)
         blink.save_to_file(content, "event_"+filename)
 
     def test_thumbnail_event_v2_download(self):
-        event = self.b.eventsv2()[0]
+        events = self.b.eventsv2()
+        if len(events) == 0:
+            return ;
+        event = events[0]
         content = self.b.download_thumbnail_event_v2(event)
         filename = self.b.get_thumbnail_name_event(event, "event")
         f = open(filename, 'wb')
@@ -48,7 +54,7 @@ class TestBlink(unittest.TestCase):
         print('Save downloaded image to ' + filename)
 
 ###############################################################################
-##  MiddleWare APIs     
+##  Middleware Functions    
 ###############################################################################
     def test_list_network_ids(self):
         ids = self.b.list_network_ids()
@@ -57,6 +63,18 @@ class TestBlink(unittest.TestCase):
     def test_list_camera_ids(self):
         ids = self.b.list_camera_ids()
         self.assertEqual(type(ids), list)
+
+    def test_events_from_camera(self):
+        ids = self.b.list_camera_ids()
+        if len(ids) > 0:
+            id = ids[0]
+            events = self.b.events_from_camera(id, 1)
+            if len(events) > 0:
+                event = events[0]
+                content = self.b.download_video_v2(event)
+                filename = self.b.get_event_name_v2(event)
+                blink.save_to_file(content, "event_camera_"+filename)
+
 
 ###############################################################################
 ##  System APIs     
