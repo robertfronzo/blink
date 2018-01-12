@@ -11,8 +11,18 @@ Highlighted functions based on blink client APIs:
 + List all onbaorded camera IDs
 + Download video clips from all cameras or one camera
 
+The following experiments are carried out with Blink XT cameras. 
 --- 
 # How To Use
+Run examples
+```python
+$ python main.py --email *youremail* --password *yourpassword*
+```
+Run unittests
+```python
+$ python unittests.py *youremail* *yourpassword*
+```
+
 
 ## Step 1. Initialize blink
 
@@ -60,26 +70,37 @@ Highlighted functions based on blink client APIs:
             blink.save_to_file(content, str(id) + "_" + filename)
 ```
 
-# Blink API Summary in this repo
+# Blink API Summary
 |Function|Description|Implemented|Works|
 |--------|-----------|-----------|-----|
 |`login`|Client login to the Blink Servers. | yes | yes | 
-|`networks()`|Obtain information about the Blink networks defined for the logged in user. | yes | yes | 
-|`sync_modules(network)`|Obtain information about the Blink Sync Modules on the given network. | yes | yes | 
-|`arm(network)`|Arm the given network (start recording/reporting motion events). | yes | no | 
-|`disarm(network)`|Disarm the given network (stop recording/reporting motion events. | yes | no | 
-|`command_status()`|Get status info on the given command. | yes | unknown | 
-|`homescreen()`|Return information displayed on the home screen of the mobile client. | yes | yes | 
-|`events(network)`|Get events for a given network (sync module). | yes | yes | 
-|`download_video(event)`|Get a video clip from the events list. | yes | yes | 
-|`download_thumbnail(event)`|Get a thumbnail from the events list. | yes | no | 
-|`cameras(network)`|Gets a list of cameras. | yes | yes | 
-|`clients()`|Gets information about devices that have connected to the blink service. | yes | yes | 
-|`regions()`|Gets information about supported regions. | yes | yes | 
-|`health()`|Gets information about system health. | yes | yes | 
-|`capture_video(camera)`|Captures a new video for a camera. | no |  | 
-|`capture_thumbnail(camera)`|Captures a new thumbnail for a camera. | no |  | 
-|`unwatched_videos()`|Gets a list of unwatched videos. | no |  | 
-|`delete(video)`|Deletes a video. | no |  | 
+|`networks`|Obtain information about the Blink networks defined for the logged in user. | yes | yes | 
+|`cameras`|Gets a list of cameras. | yes | yes | 
+|`homescreen`|Return information displayed on the home screen of the mobile client. | yes | yes | 
+|`download_thumbnail (event/device) `|Get a thumbnail from the event or device. | yes | yes | 
+
+|`eventsv2`|Gets a paginated set of video information. | yes | yes | 
+|`download_video_v2`|Get a video clip from the events list. | yes | yes | 
+|`get_video_count`|Get total number of videos. | yes | yes | 
+|`refresh_all_cameras`|Refresh all cameras by capturing latest camera thumbnails. | yes | yes | 
+<!-- capture video -->
+
+|`sync_modules`|Obtain information about the Blink Sync Modules on the given network. | yes | yes | 
+|`arm`|Arm the given network (start recording/reporting motion events). | yes | yes | 
+|`disarm`|Disarm the given network (stop recording/reporting motion events. | yes | yes | 
+|`command_status`|Get status info on the given command. | yes | yes | 
+|`events`|Get events for a given network (sync module). | yes | yes | 
+<!-- getvideoinfo -->
+|`unwatched_videos`|Gets a list of unwatched videos. | yes | yes | 
+<!-- |`delete(video)`|Deletes a video. | yes | yes |  -->
+<!-- |`delete(videos)`|Deletes all videos. | no |  |  -->
+
+<!-- get one camera -->
+<!-- get sensors from one camera -->
+|`clients`|Gets information about devices that have connected to the blink service. | yes | yes | 
+|`regions`|Gets information about supported regions. | yes | yes | 
+
+|`health`|Gets information about system health. | yes | no | 
+|`program info`|Gets information about programs. | yes | no | 
 
 # Unofficial API Doc

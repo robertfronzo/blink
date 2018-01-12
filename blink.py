@@ -90,7 +90,7 @@ class Blink(object):
         return files[len(files)-1] + postfix + ".jpg"
     
 ###############################################################################
-##  Client APIs     
+##  Hightlighed Client APIs     
 ###############################################################################
     def login(self):
         headers = {
@@ -117,6 +117,13 @@ class Blink(object):
         (self._region, value) = raw['region'].items()[0]
         self._authtoken = raw['authtoken']
     
+    def cameras(self, network, type='motion'):
+        self._connect_if_needed()
+        resp = requests.get(self._path('network/%s/cameras' % network.id), headers=self._auth_headers)
+        cameras = resp.json()['devicestatus']
+        cameras = [Camera(**camera) for camera in cameras]
+        return cameras
+
     def homescreen(self):
         '''
         Return information displayed on the home screen of the mobile client
@@ -125,6 +132,23 @@ class Blink(object):
         resp = requests.get(self._path('homescreen'), headers=self._auth_headers)
         return resp.json()
 
+    def download_thumbnail_event_v2(self, event):
+        '''
+          returns the jpg data as a file-like object
+        '''
+        self._connect_if_needed()
+        resp = requests.get(self._path(event.thumbnail+".jpg"), headers=self._auth_headers)
+        return resp.content
+
+    def download_thumbnail_home_v2(self, device):
+        '''
+          returns the jpg data as a file-like object
+        '''
+        self._connect_if_needed()
+        filename = device['thumbnail']+".jpg"
+        resp = requests.get(self._path(filename), headers=self._auth_headers)
+        return resp.content, self.get_thumbnail_name_device(device)
+    
     def eventsv2(self, pagenumber = 0):
         self._connect_if_needed()
         resp = requests.get(self._path('api/v2/videos/page/'+str(pagenumber)), headers=self._auth_headers)
@@ -145,25 +169,8 @@ class Blink(object):
         resp = requests.get(self._path(event.address), headers=self._auth_headers)
         return resp.content
 
-    def download_thumbnail_event_v2(self, event):
-        '''
-          returns the jpg data as a file-like object
-        '''
-        self._connect_if_needed()
-        resp = requests.get(self._path(event.thumbnail+".jpg"), headers=self._auth_headers)
-        return resp.content
-
-    def download_thumbnail_home_v2(self, device):
-        '''
-          returns the jpg data as a file-like object
-        '''
-        self._connect_if_needed()
-        filename = device['thumbnail']+".jpg"
-        resp = requests.get(self._path(filename), headers=self._auth_headers)
-        return resp.content, self.get_thumbnail_name_device(device)
-
 ###############################################################################
-##  Middleware Functions     
+##  Wrapped Functions   
 ###############################################################################
     def list_network_ids(self):
         self._connect_if_needed()
@@ -232,7 +239,7 @@ class Blink(object):
 
 
 ###############################################################################
-##  System APIs     
+##  Other Client APIs     
 ###############################################################################
     def sync_modules(self, network):
         '''
@@ -242,13 +249,6 @@ class Blink(object):
         self._connect_if_needed()
         resp = requests.get(self._path('network/%s/syncmodules' % network.id), headers=self._auth_headers)
         return [SyncModule(**resp.json()['syncmodule'])]
-
-    def cameras(self, network, type='motion'):
-        self._connect_if_needed()
-        resp = requests.get(self._path('network/%s/cameras' % network.id), headers=self._auth_headers)
-        cameras = resp.json()['devicestatus']
-        cameras = [Camera(**camera) for camera in cameras]
-        return cameras
 
     def arm(self, network):
         '''

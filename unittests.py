@@ -11,7 +11,7 @@ class TestBlink(unittest.TestCase):
         self.b.login()
 
 ###############################################################################
-##  Client APIs     
+##  Highlighted Client APIs     
 ###############################################################################
     def test_login(self):
         self.assertTrue(self.b.connected)
@@ -55,7 +55,7 @@ class TestBlink(unittest.TestCase):
         print('Save downloaded image to ' + filename)
 
 ###############################################################################
-##  Middleware Functions    
+##  Wrapped Functions    
 ###############################################################################
     def test_list_network_ids(self):
         ids = self.b.list_network_ids()
@@ -78,7 +78,7 @@ class TestBlink(unittest.TestCase):
 
 
 ###############################################################################
-##  System APIs     
+##  Other Client APIs     
 ###############################################################################
     def test_cameras(self):
         cameras = self.b.cameras(self.b.networks[0])
