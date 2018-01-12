@@ -75,8 +75,8 @@ class TestBlink(unittest.TestCase):
                 content = self.b.download_video_v2(event)
                 filename = self.b.get_event_name_v2(event)
                 blink.save_to_file(content, "event_camera_"+filename)
-    def test_refresh_all_cameras(self):
-        self.b.refresh_all_cameras(True)
+    def test_refresh_all_cameras_thumbnail(self):
+        self.b.refresh_all_cameras_thumbnail()
         data = self.b.homescreen()
         for device in data['devices']:
             if device['device_type'] is not None and device['device_type'] == "camera":
@@ -84,12 +84,6 @@ class TestBlink(unittest.TestCase):
                 filename = "test_refresh_" + filename
                 blink.save_to_file(content, filename)
                 print("Download latest thumbnails to " + filename)
-
-                event = self.b.events_from_camera(device['device_id'], 1)[0]
-                content = self.b.download_video_v2(event)
-                filename = self.b.get_event_name_v2(event)
-                blink.save_to_file(content, "test_refresh"+filename)
-
 
 ###############################################################################
 ##  Other Client APIs     

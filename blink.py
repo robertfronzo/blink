@@ -199,7 +199,7 @@ class Blink(object):
 
         return ids
 
-    def refresh_all_cameras(self, captureVideo=False):
+    def refresh_all_cameras_thumbnail(self):
         '''
           Refresh all cameras with lastest thumbnails
         '''
@@ -216,19 +216,32 @@ class Blink(object):
             for camera in respcam['devicestatus']:
                 capurl = self._path("network/"+str(network['id'])+"/camera/"+str(camera['camera_id'])+"/thumbnail")
                 rescap = requests.post(capurl, headers=self._auth_headers)
-
-                if captureVideo:
-                    capurl = self._path("network/"+str(network['id'])+"/camera/"+str(camera['camera_id'])+"/clip")
-                    # print("capture video url: " + capurl)
-                    rescap = requests.post(capurl, headers=self._auth_headers).json()
-                    # print("capture video output: " + str(rescap))
-
-        print('''Warning: camera needs some time to refresh. 
-        This implementatio only sleeps for a little while. 
-        If you enable video capturing, please wait longer and check captured videos.
-        ''')
-        sleep(1)
+        sleep(1.5)
         return ;
+
+    def refresh_all_cameras_video(self):
+        '''
+          Refresh all cameras with lastest thumbnails
+        '''
+        self._connect_if_needed()
+
+        resp = requests.get(self._path("networks"), headers=self._auth_headers)
+        resp = resp.json()
+        for network in resp['networks']:
+            if not resp['summary'][str(network['id'])]['onboarded']:
+                continue
+            camurl = self._path("network/"+str(network['id'])+"/cameras")
+            respcam = requests.get(camurl, headers=self._auth_headers)
+            respcam = respcam.json()
+            for camera in respcam['devicestatus']:
+                capurl = self._path("network/"+str(network['id'])+"/camera/"+str(camera['camera_id'])+"/clip")
+                # print("capture video url: " + capurl)
+                rescap = requests.post(capurl, headers=self._auth_headers).json()
+                print("capture video output: " + str(rescap))
+
+        sleep(8)
+        return ;
+
 
     def events_from_camera(self, camera_id, max_count = 5):
         self._connect_if_needed()

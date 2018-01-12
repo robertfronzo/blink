@@ -82,7 +82,8 @@ $ python unittests.py *youremail* *yourpassword*
 |`eventsv2`|Gets a paginated set of video information. | yes | yes | 
 |`download_video_v2`|Get a video clip from the events list. | yes | yes | 
 |`get_video_count`|Get total number of videos. | yes | yes | 
-|`refresh_all_cameras`|Refresh all cameras by capturing thumbnails or videos. | yes | yes | 
+|`refresh_all_cameras_thumbnail`|Refresh all cameras by capturing thumbnails. | yes | yes | 
+|`refresh_all_cameras_video`|Refresh all cameras by capturing videos. | yes | yes | 
 ---
 |`sync_modules`|Obtain information about the Blink Sync Modules on the given network. | yes | yes | 
 |`arm`|Arm the given network (start recording/reporting motion events). | yes | yes | 

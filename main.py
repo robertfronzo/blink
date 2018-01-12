@@ -28,7 +28,7 @@ if __name__=='__main__':
     print('Camera Sensor Info: ' + str(cameraSensorInfo))
 
     # Update all cameras and download latest thumbnails
-    b.refresh_all_cameras()
+    b.refresh_all_cameras_thumbnail()
     data = b.homescreen()
     for device in data['devices']:
         if device['device_type'] is not None and device['device_type'] == "camera":
