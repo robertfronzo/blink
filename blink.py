@@ -199,7 +199,7 @@ class Blink(object):
 
         return ids
 
-    def refresh_all_cameras(self):
+    def refresh_all_cameras(self, captureVideo=False):
         '''
           Refresh all cameras with lastest thumbnails
         '''
@@ -216,6 +216,10 @@ class Blink(object):
             for camera in respcam['devicestatus']:
                 capurl = self._path("network/"+str(network['id'])+"/camera/"+str(camera['camera_id'])+"/thumbnail")
                 rescap = requests.post(capurl, headers=self._auth_headers)
+
+                if captureVideo:
+                    capurl = self._path("network/"+str(network['id'])+"/camera/"+str(camera['camera_id'])+"/clip")
+                    rescap = requests.post(capurl, headers=self._auth_headers)
 
         #Camera needs some time to refresh
         sleep(1)
@@ -281,6 +285,11 @@ class Blink(object):
         resp = requests.get(self._path('network/%s/command/%s' % (network.id, command_id)), headers=self._auth_headers)
         return resp.json()
 
+    def get_video_info(self, id):
+        self._connect_if_needed()
+        resp = requests.get(self._path('api/v2/video/'+str(id)), headers=self._auth_headers)
+        return resp.json()
+
     def get_unwatched_videos(self):
         self._connect_if_needed()
         resp = requests.get(self._path('api/v2/videos/unwatched/page/0'), headers=self._auth_headers)
@@ -288,6 +297,50 @@ class Blink(object):
         videos = [Video(**video) for video in videos]
         return videos
 
+    def delete_video(self, id):
+        self._connect_if_needed()
+        resp = requests.post(self._path('api/v2/video/'+str(id)+"/delete"), headers=self._auth_headers)
+        return resp.json().code == 704
+
+    def get_camera_info(self):
+        self._connect_if_needed()
+
+        cameraInfos = []
+
+        resp = requests.get(self._path("networks"), headers=self._auth_headers)
+        resp = resp.json()
+        for network in resp['networks']:
+            if not resp['summary'][str(network['id'])]['onboarded']:
+                continue
+            camurl = self._path("network/"+str(network['id'])+"/cameras")
+            respcam = requests.get(camurl, headers=self._auth_headers)
+            respcam = respcam.json()
+            for camera in respcam['devicestatus']:
+                capurl = self._path("network/"+str(network['id'])+"/camera/"+str(camera['camera_id']))
+                cameraInfo = requests.get(capurl, headers=self._auth_headers).json()
+                cameraInfos.append(cameraInfo)
+
+        return cameraInfos
+                
+    def get_camera_sensor_info(self):
+        self._connect_if_needed()
+
+        cameraSensorInfos = []
+
+        resp = requests.get(self._path("networks"), headers=self._auth_headers)
+        resp = resp.json()
+        for network in resp['networks']:
+            if not resp['summary'][str(network['id'])]['onboarded']:
+                continue
+            camurl = self._path("network/"+str(network['id'])+"/cameras")
+            respcam = requests.get(camurl, headers=self._auth_headers)
+            respcam = respcam.json()
+            for camera in respcam['devicestatus']:
+                capurl = self._path("network/"+str(network['id'])+"/camera/"+str(camera['camera_id']) + "/signals")
+                cameraSensorInfo = requests.get(capurl, headers=self._auth_headers).json()
+                cameraSensorInfos.append(cameraSensorInfo)
+
+        return cameraSensorInfos
 
     def clients(self):
         '''

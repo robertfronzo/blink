@@ -70,7 +70,7 @@ $ python unittests.py *youremail* *yourpassword*
             blink.save_to_file(content, str(id) + "_" + filename)
 ```
 
-# Blink API Summary
+# API Summary
 |Function|Description|Implemented|Works|
 |--------|-----------|-----------|-----|
 |`login`|Client login to the Blink Servers. | yes | yes | 
@@ -78,28 +78,26 @@ $ python unittests.py *youremail* *yourpassword*
 |`cameras`|Gets a list of cameras. | yes | yes | 
 |`homescreen`|Return information displayed on the home screen of the mobile client. | yes | yes | 
 |`download_thumbnail (event/device) `|Get a thumbnail from the event or device. | yes | yes | 
-
+---
 |`eventsv2`|Gets a paginated set of video information. | yes | yes | 
 |`download_video_v2`|Get a video clip from the events list. | yes | yes | 
 |`get_video_count`|Get total number of videos. | yes | yes | 
-|`refresh_all_cameras`|Refresh all cameras by capturing latest camera thumbnails. | yes | yes | 
-<!-- capture video -->
-
+|`refresh_all_cameras`|Refresh all cameras by capturing thumbnails or videos. | yes | yes | 
+---
 |`sync_modules`|Obtain information about the Blink Sync Modules on the given network. | yes | yes | 
 |`arm`|Arm the given network (start recording/reporting motion events). | yes | yes | 
 |`disarm`|Disarm the given network (stop recording/reporting motion events. | yes | yes | 
 |`command_status`|Get status info on the given command. | yes | yes | 
 |`events`|Get events for a given network (sync module). | yes | yes | 
-<!-- getvideoinfo -->
+|`get_video_info`|Gets information for a specific video by ID. | yes | yes | 
 |`unwatched_videos`|Gets a list of unwatched videos. | yes | yes | 
-<!-- |`delete(video)`|Deletes a video. | yes | yes |  -->
-<!-- |`delete(videos)`|Deletes all videos. | no |  |  -->
-
-<!-- get one camera -->
-<!-- get sensors from one camera -->
+|`delete(video)`|Deletes a video. | yes | yes | 
+|`delete(videos)`|Deletes all videos. | no |  | 
+|`get_camera_info`|Gets camera information. | yes | yes | 
+|`get_camera_sensor_info`|Gets camera sensor information. | yes | yes | 
 |`clients`|Gets information about devices that have connected to the blink service. | yes | yes | 
 |`regions`|Gets information about supported regions. | yes | yes | 
-
+---
 |`health`|Gets information about system health. | yes | no | 
 |`program info`|Gets information about programs. | yes | no | 
 

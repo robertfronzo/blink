@@ -75,6 +75,20 @@ class TestBlink(unittest.TestCase):
                 content = self.b.download_video_v2(event)
                 filename = self.b.get_event_name_v2(event)
                 blink.save_to_file(content, "event_camera_"+filename)
+    def test_refresh_all_cameras(self):
+        self.b.refresh_all_cameras(True)
+        data = self.b.homescreen()
+        for device in data['devices']:
+            if device['device_type'] is not None and device['device_type'] == "camera":
+                content,filename = b.download_thumbnail_home_v2(device)  
+                filename = "test_refresh_" + filename
+                blink.save_to_file(content, filename)
+                print("Download latest thumbnails to " + filename)
+
+                event = self.b.events_from_camera(device['device_id'], 1)[0]
+                content = self.b.download_video_v2(event)
+                filename = self.b.get_event_name_v2(event)
+                blink.save_to_file(content, "test_refresh"+filename)
 
 
 ###############################################################################
@@ -96,6 +110,22 @@ class TestBlink(unittest.TestCase):
     def test_regions(self):
         regions = self.b.regions()
         print(regions)
+
+    def test_get_video_info(self):
+        events = self.b.eventsv2()
+        if len(events) == 0:
+            return ;
+        event = events[0]
+        eventinfo = self.b.get_video_info(event.id)
+        print("eventinfo:" + eventinfo)
+
+    def test_delete_video(self):
+        events = self.b.eventsv2()
+        if len(events) == 0:
+            return ;
+        event = events[0]
+        suc = self.b.delete_video(event.id)
+        self.assertTrue(suc)
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
