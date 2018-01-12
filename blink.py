@@ -300,7 +300,7 @@ class Blink(object):
     def delete_video(self, id):
         self._connect_if_needed()
         resp = requests.post(self._path('api/v2/video/'+str(id)+"/delete"), headers=self._auth_headers)
-        return resp.json().code == 704
+        return resp.json()['code'] == 704
 
     def get_camera_info(self):
         self._connect_if_needed()

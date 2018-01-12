@@ -80,7 +80,7 @@ class TestBlink(unittest.TestCase):
         data = self.b.homescreen()
         for device in data['devices']:
             if device['device_type'] is not None and device['device_type'] == "camera":
-                content,filename = b.download_thumbnail_home_v2(device)  
+                content,filename = self.b.download_thumbnail_home_v2(device)  
                 filename = "test_refresh_" + filename
                 blink.save_to_file(content, filename)
                 print("Download latest thumbnails to " + filename)
@@ -117,7 +117,7 @@ class TestBlink(unittest.TestCase):
             return ;
         event = events[0]
         eventinfo = self.b.get_video_info(event.id)
-        print("eventinfo:" + eventinfo)
+        print("eventinfo:" + str(eventinfo))
 
     def test_delete_video(self):
         events = self.b.eventsv2()
