@@ -35,11 +35,15 @@ $ python unittests.py *youremail* *yourpassword*
 ```python
     networksids = b.list_network_ids()
     cameraids = b.list_camera_ids()
+    cameraInfo = b.get_camera_info()
+    print('Camera Info: ' + str(cameraInfo))
+    cameraSensorInfo = b.get_camera_sensor_info()
+    print('Camera Sensor Info: ' + str(cameraSensorInfo))
 ```
 
 ## Step 3. Capture and download latest thumnail
 ```python
-    b.refresh_all_cameras()
+    b.refresh_all_cameras_thumbnail()
     data = b.homescreen()
     for device in data['devices']:
         if device['device_type'] is not None and device['device_type'] == "camera":
