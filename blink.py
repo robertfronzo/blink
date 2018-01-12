@@ -338,6 +338,8 @@ class Blink(object):
             for camera in respcam['devicestatus']:
                 capurl = self._path("network/"+str(network['id'])+"/camera/"+str(camera['camera_id']) + "/signals")
                 cameraSensorInfo = requests.get(capurl, headers=self._auth_headers).json()
+                cameraSensorInfo['network_id'] = network['id']
+                cameraSensorInfo['camera_id'] = camera['camera_id']
                 cameraSensorInfos.append(cameraSensorInfo)
 
         return cameraSensorInfos

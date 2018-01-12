@@ -23,9 +23,9 @@ if __name__=='__main__':
     for id in cameraids:
         print(id)
     cameraInfo = b.get_camera_info()
-    print('Camera Info: ' + cameraInfo)
+    print('Camera Info: ' + str(cameraInfo))
     cameraSensorInfo = b.get_camera_sensor_info()
-    print('Camera Sensor Info: ' + cameraids)
+    print('Camera Sensor Info: ' + str(cameraSensorInfo))
 
     # Update all cameras and download latest thumbnails
     b.refresh_all_cameras()
