@@ -120,10 +120,10 @@ class TestBlink(unittest.TestCase):
         print("eventinfo:" + str(eventinfo))
 
     def test_delete_video(self):
-        events = self.b.eventsv2()
+        events = self.b.eventsv2(1000)
         if len(events) == 0:
             return ;
-        event = events[0]
+        event = events[len(events)-1]
         suc = self.b.delete_video(event.id)
         self.assertTrue(suc)
 

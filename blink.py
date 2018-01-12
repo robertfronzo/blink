@@ -219,9 +219,14 @@ class Blink(object):
 
                 if captureVideo:
                     capurl = self._path("network/"+str(network['id'])+"/camera/"+str(camera['camera_id'])+"/clip")
-                    rescap = requests.post(capurl, headers=self._auth_headers)
+                    # print("capture video url: " + capurl)
+                    rescap = requests.post(capurl, headers=self._auth_headers).json()
+                    # print("capture video output: " + str(rescap))
 
-        #Camera needs some time to refresh
+        print('''Warning: camera needs some time to refresh. 
+        This implementatio only sleeps for a little while. 
+        If you enable video capturing, please wait longer and check captured videos.
+        ''')
         sleep(1)
         return ;
 
