@@ -1,41 +1,69 @@
-![image](https://cloud.githubusercontent.com/assets/2049665/24316082/58e34c7e-10b9-11e7-93fa-88ca46f13d46.png)
 
-# Blink
-Python API for the Blink Home Security Camera System
+# Blink Home Security Camera System
+This project is based on [BlinkMonitorProtocol](https://github.com/MattTW/BlinkMonitorProtocol) and [Blink](https://github.com/keredson/blink).
 
-This is based off the documentation at: https://github.com/MattTW/BlinkMonitorProtocol
++ Python API for Blink Cameras
++ Unofficial API documentation with Shell/Python/JavaScript example codes and with sample results
 
-## Usage
+Highlighted functions based on blink client APIs:
++ Refresh all cameras by capturing thumbnails
++ List all onboarded clied networks IDs 
++ List all onbaorded camera IDs
++ Download video clips from all cameras or one camera
+
+--- 
+# How To Use
+
+## Step 1. Initialize blink
+
 ```python
-import blink
-b = blink.Blink()
-events = b.events()
-an_event = events[0]
-mp4_data = b.download_video(an_event)
+    import blink
+    b = blink.Blink(*youremail*, *yourpassword*)
 ```
 
-This assumes you have a file `~/.blinkconfig` that looks like this:
-```
-me@somewhere.net: my_password
-```
-Alternatively, you can init Blink like so:
-```
-b = blink.Blink(email='me@somewhere.net', password='my_password')
+## Step 2. List onboarded networks and cameras
+```python
+    networksids = b.list_network_ids()
+    cameraids = b.list_camera_ids()
 ```
 
-## Archiving Video
-Blink eventually deletes old video clips.  If you want to archive your videos locally, run:
-
+## Step 3. Capture and download latest thumnail
+```python
+    b.refresh_all_cameras()
+    data = b.homescreen()
+    for device in data['devices']:
+        if device['device_type'] is not None and device['device_type'] == "camera":
+            content,filename = b.download_thumbnail_home_v2(device)  
+            blink.save_to_file(content, filename)
+            print("Download latest thumbnails to " + filename)
 ```
-$ python -m blink --archive path/to/archive_dir
+
+## Step 4. Download events from camera(s)
+```python
+    # Download events from a network
+    print("Download latest events from all cameras")
+    events = b.eventsv2()
+    for event in events:
+        content = b.download_video_v2(event)
+        filename = b.get_event_name_v2(event)
+        blink.save_to_file(content, filename)
+
+    # Download latest events from one camera
+    print("Download latest events from one camera")
+    if len(cameraids) > 0:
+        id = cameraids[0]
+        # Download at most 5 event from this camera
+        events = b.events_from_camera(id, 5)
+        for event in events:
+            content = b.download_video_v2(event)
+            filename = b.get_event_name_v2(event)
+            blink.save_to_file(content, str(id) + "_" + filename)
 ```
 
-Typically this would be put into a cron job.
-
-## API
+# Blink API Summary in this repo
 |Function|Description|Implemented|Works|
 |--------|-----------|-----------|-----|
-|`connect()`|Client login to the Blink Servers. | yes | yes | 
+|`login`|Client login to the Blink Servers. | yes | yes | 
 |`networks()`|Obtain information about the Blink networks defined for the logged in user. | yes | yes | 
 |`sync_modules(network)`|Obtain information about the Blink Sync Modules on the given network. | yes | yes | 
 |`arm(network)`|Arm the given network (start recording/reporting motion events). | yes | no | 
@@ -53,3 +81,5 @@ Typically this would be put into a cron job.
 |`capture_thumbnail(camera)`|Captures a new thumbnail for a camera. | no |  | 
 |`unwatched_videos()`|Gets a list of unwatched videos. | no |  | 
 |`delete(video)`|Deletes a video. | no |  | 
+
+# Unofficial API Doc
