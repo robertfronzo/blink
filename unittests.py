@@ -1,4 +1,5 @@
 import sys, json, unittest
+import blink
 from blink import Blink
 
 class TestBlink(unittest.TestCase):
