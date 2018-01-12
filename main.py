@@ -33,6 +33,7 @@ if __name__=='__main__':
             print("Download latest thumbnails to " + filename)
 
     # Download latest events from all cameras
+    print("Download latest events from all cameras")
     events = b.eventsv2()
     for event in events:
         content = b.download_video_v2(event)
@@ -40,6 +41,7 @@ if __name__=='__main__':
         blink.save_to_file(content, filename)
 
     # Download latest events from one camera
+    print("Download latest events from one camera")
     if len(cameraids) > 0:
         id = cameraids[0]
         # Download at most 5 event from this camera
