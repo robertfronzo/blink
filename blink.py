@@ -111,7 +111,7 @@ class Blink(object):
         return files[len(files)-1] + postfix + ".jpg"
     
 ###############################################################################
-##  Hightlighed Client APIs     
+##  Highlighted Client APIs     
 ###############################################################################
     def login(self):
         headers = {

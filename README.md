@@ -1,9 +1,9 @@
 
 # Blink Home Security Camera System
-This project is based on [BlinkMonitorProtocol](https://github.com/MattTW/BlinkMonitorProtocol) and [Blink](https://github.com/keredson/blink).
+This project is based on [BlinkMonitorProtocol](https://github.com/MattTW/BlinkMonitorProtocol) and [Blink](https://github.com/keredson/blink), including:
 
 + Python API for Blink Cameras
-+ Unofficial API documentation with Shell/Python/JavaScript example codes and with sample results
+<!-- + Unofficial API documentation with Shell/Python/JavaScript example codes and with sample results -->
 
 Highlighted functions based on blink client APIs:
 + Refresh all cameras by capturing thumbnails
@@ -12,15 +12,16 @@ Highlighted functions based on blink client APIs:
 + Download video clips from all cameras or one camera
 
 The following experiments are carried out with Blink XT cameras. 
+
 --- 
 # How To Use
 Run examples
 ```python
-$ python main.py --email *youremail* --password *yourpassword*
+    python main.py --email youremail --password yourpassword
 ```
 Run unittests
 ```python
-$ python unittests.py *youremail* *yourpassword*
+    python unittests.py youremail yourpassword
 ```
 
 
@@ -82,13 +83,11 @@ $ python unittests.py *youremail* *yourpassword*
 |`cameras`|Gets a list of cameras. | yes | yes | 
 |`homescreen`|Return information displayed on the home screen of the mobile client. | yes | yes | 
 |`download_thumbnail (event/device) `|Get a thumbnail from the event or device. | yes | yes | 
----
 |`eventsv2`|Gets a paginated set of video information. | yes | yes | 
 |`download_video_v2`|Get a video clip from the events list. | yes | yes | 
 |`get_video_count`|Get total number of videos. | yes | yes | 
 |`refresh_all_cameras_thumbnail`|Refresh all cameras by capturing thumbnails. | yes | yes | 
 |`refresh_all_cameras_video`|Refresh all cameras by capturing videos. | yes | yes | 
----
 |`sync_modules`|Obtain information about the Blink Sync Modules on the given network. | yes | yes | 
 |`arm`|Arm the given network (start recording/reporting motion events). | yes | yes | 
 |`disarm`|Disarm the given network (stop recording/reporting motion events. | yes | yes | 
@@ -102,8 +101,7 @@ $ python unittests.py *youremail* *yourpassword*
 |`get_camera_sensor_info`|Gets camera sensor information. | yes | yes | 
 |`clients`|Gets information about devices that have connected to the blink service. | yes | yes | 
 |`regions`|Gets information about supported regions. | yes | yes | 
----
 |`health`|Gets information about system health. | yes | no | 
 |`program info`|Gets information about programs. | yes | no | 
 
-# Unofficial API Doc
+<!-- # Unofficial API Doc -->
