@@ -2,7 +2,7 @@
 # Blink Home Security Camera System
 This project is based on [BlinkMonitorProtocol](https://github.com/MattTW/BlinkMonitorProtocol) and [Blink](https://github.com/keredson/blink), including:
 
-+ Python API for Blink Cameras
++ Python API for Blink Cameras (python 2.7)
 <!-- + Unofficial API documentation with Shell/Python/JavaScript example codes and with sample results -->
 
 Highlighted functions based on blink client APIs:
@@ -17,62 +17,62 @@ The following experiments are carried out with Blink XT cameras.
 # How To Use
 Run examples
 ```python
-    python main.py --email youremail --password yourpassword
+python main.py --email youremail --password yourpassword
 ```
 Run unittests
 ```python
-    python unittests.py youremail yourpassword
+python unittests.py youremail yourpassword
 ```
 
 
 ## Step 1. Initialize blink
 
 ```python
-    import blink
-    b = blink.Blink(*youremail*, *yourpassword*)
+import blink
+b = blink.Blink(*youremail*, *yourpassword*)
 ```
 
 ## Step 2. List onboarded networks and cameras
 ```python
-    networksids = b.list_network_ids()
-    cameraids = b.list_camera_ids()
-    cameraInfo = b.get_camera_info()
-    print('Camera Info: ' + str(cameraInfo))
-    cameraSensorInfo = b.get_camera_sensor_info()
-    print('Camera Sensor Info: ' + str(cameraSensorInfo))
+networksids = b.list_network_ids()
+cameraids = b.list_camera_ids()
+cameraInfo = b.get_camera_info()
+print('Camera Info: ' + str(cameraInfo))
+cameraSensorInfo = b.get_camera_sensor_info()
+print('Camera Sensor Info: ' + str(cameraSensorInfo))
 ```
 
 ## Step 3. Capture and download latest thumnail
 ```python
-    b.refresh_all_cameras_thumbnail()
-    data = b.homescreen()
-    for device in data['devices']:
-        if device['device_type'] is not None and device['device_type'] == "camera":
-            content,filename = b.download_thumbnail_home_v2(device)  
-            blink.save_to_file(content, filename)
-            print("Download latest thumbnails to " + filename)
+b.refresh_all_cameras_thumbnail()
+data = b.homescreen()
+for device in data['devices']:
+    if device['device_type'] is not None and device['device_type'] == "camera":
+        content,filename = b.download_thumbnail_home_v2(device)
+        blink.save_to_file(content, filename)
+        print("Download latest thumbnails to " + filename)
 ```
 
 ## Step 4. Download events from camera(s)
 ```python
-    # Download events from a network
-    print("Download latest events from all cameras")
-    events = b.eventsv2()
+# Download events from a network
+print("Download latest events from all cameras")
+events = b.eventsv2()
+for event in events:
+    content = b.download_video_v2(event)
+    filename = b.get_event_name_v2(event)
+    blink.save_to_file(content, filename)
+
+# Download latest events from one camera
+print("Download latest events from one camera")
+if len(cameraids) > 0:
+    id = cameraids[0]
+    # Download at most 5 event from this camera
+    events = b.events_from_camera(id, 5)
     for event in events:
         content = b.download_video_v2(event)
         filename = b.get_event_name_v2(event)
-        blink.save_to_file(content, filename)
-
-    # Download latest events from one camera
-    print("Download latest events from one camera")
-    if len(cameraids) > 0:
-        id = cameraids[0]
-        # Download at most 5 event from this camera
-        events = b.events_from_camera(id, 5)
-        for event in events:
-            content = b.download_video_v2(event)
-            filename = b.get_event_name_v2(event)
-            blink.save_to_file(content, str(id) + "_" + filename)
+        blink.save_to_file(content, str(id) + "_" + filename)
 ```
 
 # API Summary
