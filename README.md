@@ -14,7 +14,7 @@ Highlighted functions based on blink client APIs:
 The following experiments are carried out with Blink XT cameras. 
 
 --- 
-# How To Use
+## How To Use
 Run examples
 ```
 python main.py --email youremail --password yourpassword
@@ -25,14 +25,14 @@ python unittests.py youremail yourpassword
 ```
 
 
-## Step 1. Initialize blink
+### Step 1. Initialize blink
 
 ```python
 import blink
 b = blink.Blink(*youremail*, *yourpassword*)
 ```
 
-## Step 2. List onboarded networks and cameras
+### Step 2. List onboarded networks and cameras
 ```python
 networksids = b.list_network_ids()
 cameraids = b.list_camera_ids()
@@ -42,7 +42,7 @@ cameraSensorInfo = b.get_camera_sensor_info()
 print('Camera Sensor Info: ' + str(cameraSensorInfo))
 ```
 
-## Step 3. Capture and download latest thumnail
+### Step 3. Capture and download latest thumnail
 ```python
 b.refresh_all_cameras_thumbnail()
 data = b.homescreen()
@@ -53,7 +53,7 @@ for device in data['devices']:
         print("Download latest thumbnails to " + filename)
 ```
 
-## Step 4. Download events from camera(s)
+### Step 4. Download events from camera(s)
 ```python
 # Download events from a network
 print("Download latest events from all cameras")
@@ -75,7 +75,7 @@ if len(cameraids) > 0:
         blink.save_to_file(content, str(id) + "_" + filename)
 ```
 
-# API Summary
+## API Summary
 |Function|Description|Implemented|Works|
 |--------|-----------|-----------|-----|
 |`login`|Client login to the Blink Servers. | yes | yes | 
