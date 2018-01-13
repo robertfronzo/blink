@@ -68,6 +68,9 @@ class Camera(object):
     def __repr__(self):
         return '<Camera id=%s name=%s>' % (self.id, repr(self.name))
 
+###############################################################################
+##  Blink API    
+###############################################################################
 
 class Blink(object):
 

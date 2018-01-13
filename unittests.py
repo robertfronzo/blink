@@ -2,6 +2,9 @@ import sys, json, unittest
 import blink
 from blink import Blink
 
+###############################################################################
+##  Unittests for Blink Client APIs     
+###############################################################################
 class TestBlink(unittest.TestCase):
     email = ""
     password = ""
