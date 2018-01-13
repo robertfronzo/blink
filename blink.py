@@ -11,6 +11,27 @@ def save_to_file(content, filename):
     f.write(content)
     f.close()
 
+def remove_info(filefrom, fileto):
+    fw = open(fileto, "w")
+    with open(filefrom) as f:
+        end = True
+        for line in f:
+            if end:
+                if line.find('```json') >= 0:
+                    end = False
+            else:
+                if line.find('```') >= 0:
+                    end = True
+
+            if not end:
+                index = line.find(':')
+                hasbracket = line.find('{')
+                hasinp = line.find('[')
+                if index > 0 and hasbracket < 0 and hasinp < 0:
+                    line = line[:index+1] + " xxx\n"
+            fw.write(line)
+                
+    fw.close()
 
 class Network(object):
     def __init__(self, **kwargs):
