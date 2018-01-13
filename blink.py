@@ -4,7 +4,7 @@ from time import sleep
 import dateutil.parser
 
 
-__version__ = '0.2.0'
+__version__ = '0.3.0'
 
 def save_to_file(content, filename):
     f = open(filename, 'wb')
