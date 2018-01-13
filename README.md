@@ -16,11 +16,11 @@ The following experiments are carried out with Blink XT cameras.
 --- 
 # How To Use
 Run examples
-```python
+```
 python main.py --email youremail --password yourpassword
 ```
 Run unittests
-```python
+```
 python unittests.py youremail yourpassword
 ```
 
