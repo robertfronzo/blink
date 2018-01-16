@@ -3,7 +3,7 @@
 This project is based on [BlinkMonitorProtocol](https://github.com/MattTW/BlinkMonitorProtocol) and [Blink](https://github.com/keredson/blink), including:
 
 + Python API for Blink Cameras (python 2.7)
-+ **[Unofficial API documentation](https://duangenquan.github.io/slate/) with sample requests (shell/python/javascript) and sample results **
++ **[Unofficial API documentation](https://duangenquan.github.io/slate/) with sample requests (shell/python/javascript) and sample results**
 
 Highlighted functions based on blink client APIs:
 + **Refresh all cameras by capturing thumbnails**
