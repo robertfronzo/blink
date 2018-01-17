@@ -14,6 +14,13 @@ Highlighted functions based on blink client APIs:
 The following experiments are carried out with Blink XT cameras. 
 
 --- 
+## [Unofficial API documentation](https://duangenquan.github.io/slate/)
+
+This is unofficial documentation for the Client API of the Blink Wire-Free HD Home Monitoring & Alert System. I am not affiliated with the company in any way - this documentation is strictly "AS-IS". My goal was to provide an easy way with sample requests and responses for creating programmatic APIs. Lots more to be discovered and documented - feel free to contribute!
+
+Here is snapshot for the unofficial API doc: 
+![](https://github.com/duangenquan/blink/blob/master/Snapshot_Unofficial_API_Doc.png)
+
 ## How To Use
 Run examples
 ```
