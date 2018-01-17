@@ -34,9 +34,9 @@ python unittests.py youremail yourpassword
 
 ### Step 1. Initialize blink
 
-```python
+```
 import blink
-b = blink.Blink(*youremail*, *yourpassword*)
+b = blink.Blink(youremail, yourpassword)
 ```
 
 ### Step 2. List onboarded networks and cameras
