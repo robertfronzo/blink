@@ -3,7 +3,7 @@ import blink
 from blink import Blink
 
 ###############################################################################
-##  Unittests for Blink Client APIs     
+##  Unittests for Blink Client APIs
 ###############################################################################
 class TestBlink(unittest.TestCase):
     email = ""
@@ -14,7 +14,7 @@ class TestBlink(unittest.TestCase):
         self.b.login()
 
 ###############################################################################
-##  Highlighted Client APIs     
+##  Highlighted Client APIs
 ###############################################################################
     def test_login(self):
         self.assertTrue(self.b.connected)
@@ -58,7 +58,7 @@ class TestBlink(unittest.TestCase):
         print('Save downloaded image to ' + filename)
 
 ###############################################################################
-##  Wrapped Functions    
+##  Wrapped Functions
 ###############################################################################
     def test_list_network_ids(self):
         ids = self.b.list_network_ids()
@@ -83,13 +83,13 @@ class TestBlink(unittest.TestCase):
         data = self.b.homescreen()
         for device in data['devices']:
             if device['device_type'] is not None and device['device_type'] == "camera":
-                content,filename = self.b.download_thumbnail_home_v2(device)  
+                content,filename = self.b.download_thumbnail_home_v2(device)
                 filename = "test_refresh_" + filename
                 blink.save_to_file(content, filename)
                 print("Download latest thumbnails to " + filename)
 
 ###############################################################################
-##  Other Client APIs     
+##  Other Client APIs
 ###############################################################################
     def test_cameras(self):
         cameras = self.b.cameras(self.b.networks[0])
