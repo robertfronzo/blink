@@ -30,7 +30,7 @@ def remove_info(filefrom, fileto):
                 if index > 0 and hasbracket < 0 and hasinp < 0:
                     line = line[:index+1] + " xxx\n"
             fw.write(line)
-                
+
     fw.close()
 
 class Network(object):
@@ -69,7 +69,7 @@ class Camera(object):
         return '<Camera id=%s name=%s>' % (self.id, repr(self.name))
 
 ###############################################################################
-##  Blink API    
+##  Blink API
 ###############################################################################
 
 class Blink(object):
@@ -82,18 +82,18 @@ class Blink(object):
         self._region = 'prod'
 
 ###############################################################################
-##  Property    
+##  Property
 ###############################################################################
     @property
     def connected(self):
         return self._authtoken is not None
-    
+
     @property
     def _auth_headers(self):
         return {'TOKEN_AUTH': self._authtoken['authtoken']}
 
 ###############################################################################
-##  Common    
+##  Common
 ###############################################################################
     def _connect_if_needed(self):
         if not self._authtoken: self.login()
@@ -104,7 +104,7 @@ class Blink(object):
 
     def get_event_name_v2(self, event):
         files = event.address.split('/')
-        return event.camera_name + "_" + files[len(files)-1]    
+        return event.camera_name + "_" + files[len(files)-1]
 
     def get_thumbnail_name_event(self, event, postfix=""):
         return self.get_event_name_v2(event) + postfix + ".jpg"
@@ -112,9 +112,9 @@ class Blink(object):
     def get_thumbnail_name_device(self, device, postfix=""):
         files = device['thumbnail'].split('/')
         return files[len(files)-1] + postfix + ".jpg"
-    
+
 ###############################################################################
-##  Highlighted Client APIs     
+##  Highlighted Client APIs
 ###############################################################################
     def login(self):
         headers = {
@@ -137,10 +137,10 @@ class Blink(object):
             network['id'] = network_id
             network = Network(**network)
             self.networks.append(network)
-        
+
         (self._region, value) = raw['region'].items()[0]
         self._authtoken = raw['authtoken']
-    
+
     def cameras(self, network, type='motion'):
         self._connect_if_needed()
         resp = requests.get(self._path('network/%s/cameras' % network.id), headers=self._auth_headers)
@@ -172,7 +172,7 @@ class Blink(object):
         filename = device['thumbnail']+".jpg"
         resp = requests.get(self._path(filename), headers=self._auth_headers)
         return resp.content, self.get_thumbnail_name_device(device)
-    
+
     def eventsv2(self, pagenumber = 0):
         self._connect_if_needed()
         resp = requests.get(self._path('api/v2/videos/page/'+str(pagenumber)), headers=self._auth_headers)
@@ -194,7 +194,7 @@ class Blink(object):
         return resp.content
 
 ###############################################################################
-##  Wrapped Functions   
+##  Wrapped Functions
 ###############################################################################
     def list_network_ids(self):
         self._connect_if_needed()
@@ -285,7 +285,7 @@ class Blink(object):
 
 
 ###############################################################################
-##  Other Client APIs     
+##  Other Client APIs
 ###############################################################################
     def sync_modules(self, network):
         '''
@@ -363,7 +363,7 @@ class Blink(object):
                 cameraInfos.append(cameraInfo)
 
         return cameraInfos
-                
+
     def get_camera_sensor_info(self):
         self._connect_if_needed()
 
@@ -464,4 +464,3 @@ class Blink(object):
                 mp4 = self.download_video(event)
                 with open(event_fn,'w') as f:
                     f.write(mp4)
-
